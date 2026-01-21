@@ -1,0 +1,19 @@
+{
+  "name": "skillcircle",
+  "version": "1.0.0",
+  "description": "social media for developers",
+  "main": "index.js",
+  "scripts": {
+    "dev" : "nodemon src/index.js"
+  },
+  "keywords": [
+    "nodejs",
+    "javascript"
+  ],
+  "author": "vibhuti savaldekar",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "type":"module"
+}
