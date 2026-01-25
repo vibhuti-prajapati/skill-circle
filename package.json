@@ -4,7 +4,7 @@
   "description": "social media for developers",
   "main": "index.js",
   "scripts": {
-    "dev" : "nodemon src/index.js"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [
     "nodejs",
@@ -13,7 +13,9 @@
   "author": "vibhuti savaldekar",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.1.5"
   },
-  "type":"module"
+  "type": "module"
 }
