@@ -2,12 +2,14 @@ import express from "express";
 import {adminAuth, userAuth} from "./middlewares/auth.js"
 const app = express();
 
-// request handler
-app.get("/admin/getData" , adminAuth, (req, res)=>{
-  res.send("all data for admin");
+app.get("/userdata", (req,res)=>{
+  throw new Error("hfwienong");
 });
-app.get("/user", userAuth,(req,res)=>{
-  res.send("user data");
+app.use("/",(err, req,res,next)=>{
+  if(err){
+    console.error(err);
+    res.send("something went wrong..");
+  }
 });
 app.listen(3001, () => {
   console.log("server running on port 3001");
