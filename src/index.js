@@ -113,7 +113,7 @@ app.patch("/user", async (req, res)=>{
     if(!user){
       res.statusCode(404).send("user doesnt exist");
     } else {
-      const updatedUser = await User.findByIdAndUpdate(user._id, req.body); 
+      const updatedUser = await User.findByIdAndUpdate(user._id, req.body,{ runValidators : true}); 
       if(!updatedUser){
         res.statusCode(404).send("operation failed");
       }else{
