@@ -53,20 +53,76 @@ app.get("/getFeed", async (req, res) => {
     console.log(err);
     res.send("something went wrong ");
   }
-}); 
+});
 
-//find one 
-app.get("/findOne" , async (req, res)=>{
-  try{
-    const {userEmail}= req.body.email;
+//find one
+app.get("/findOne", async (req, res) => {
+  try {
+    const { userEmail } = req.body.email;
     const user = await User.findOne(userEmail);
-    if(!user){
+    if (!user) {
       res.send("user not found");
+    } else {
+      res.send(user);
+    }
+  } catch (err) {
+    res.send("something went wrong");
+  }
+});
+
+// delete user by id
+app.delete("/user", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      res.statusCode(404).send("user doesnt exist");
+    } else {
+      const deletedUser = await User.findByIdAndDelete(user._id); 
+      if(!deletedUser){
+        res.statusCode(404).send("operation failed");
+      }else{
+        res.send("deleetd document : "+ deletedUser)
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.send("something went wrong");
+  }
+});
+
+
+// fiind by id 
+app.get("/user", async (req, res)=>{
+  try{
+    const user = await User.findById(req.body.userId);
+    if(!user){
+      res.statusCode(404).send("not found !");
     }else{
       res.send(user);
     }
   }catch(err){
-    res.send("something went wrong");
+    console.log(err);
+    res.send("something went wrong ");
+  }
+}) ; 
+
+// update a user document  by email
+app.patch("/user", async (req, res)=>{
+  try{
+    const user = await User.findOne({email: req.body.email});
+    if(!user){
+      res.statusCode(404).send("user doesnt exist");
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(user._id, req.body); 
+      if(!updatedUser){
+        res.statusCode(404).send("operation failed");
+      }else{
+        res.send("updated document : "+ updatedUser);
+      }
+    }
+  }catch(err){
+    console.log(err);
+    res.send("something went wrong ");
   }
 });
 
@@ -76,7 +132,6 @@ app.use("/", (err, req, res, next) => {
     res.send("something went wrong..");
   }
 });
-
 
 await mongoose
   .connect(process.env.MONGO_URI)
