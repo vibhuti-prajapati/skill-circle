@@ -13,14 +13,12 @@ app.use("/", (err, req, res, next) => {
     res.send("something went wrong..");
   }
 });
-
+app.use(express.json());
 app.post("/signUp", (req, res) => {
   try {
-    const user = new User({
-      name: "vibhuti",
-      email: "email123@email.com",
-      password: "password123",
-    });
+    console.log(req.body);
+    const {name, email, password} = req.body;
+    const user = new User({name, email, password});
     user.save();
     res.send("saved successfully!");
   } catch (err) {
