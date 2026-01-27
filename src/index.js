@@ -13,9 +13,6 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
-app.get("/userdata", (req, res) => {
-  throw new Error("hfwienong");
-});
 
 app.post("/signUp", async (req, res) => {
   try {
@@ -42,13 +39,9 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("invalid credentials");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = user.validatePassword(password);
     if (isPasswordValid) {
-      const token = await jwt.sign(
-        { _id: user._id },
-        "supersecretkeyofvibhuti",
-        {expiresIn:"0d"}
-      );
+      const token = await user.createJWT();
       res.cookie("token", token,  {
     expires: new Date(Date.now() + 8 * 3600000) // cookie will be removed after 8 hours
   });

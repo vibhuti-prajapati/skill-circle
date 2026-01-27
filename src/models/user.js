@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -12,7 +13,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      trim : true,
+      trim: true,
     },
     password: {
       type: String,
@@ -26,7 +27,7 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       lowercase: true,
-      trim :true,
+      trim: true,
       validate(value) {
         if (!["male", "female", "other"] === value) {
           throw new Error("gender value is not valid");
@@ -45,4 +46,15 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+// these methods return a promise since they are async so remember to use await when you  use them or you will be dealing with promises without even knowing 
+
+userSchema.methods.createJWT = async function () {
+  return jwt.sign({ _id: this._id }, "supersecretkeyofvibhuti", {
+    expiresIn: "7d",
+  });
+};
+userSchema.methods.validatePassword = async function (passwordInput) {
+  const passwordHash = this.password;
+  return await bcrypt.compare(passwordInput, passwordHash);
+};
 export default new mongoose.model("User", userSchema);
