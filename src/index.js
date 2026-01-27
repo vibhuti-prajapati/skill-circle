@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "./models/user.js";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+
 const app = express();
 dotenv.config();
 
@@ -15,7 +17,8 @@ app.post("/signUp", async (req, res) => {
   try {
     console.log(req.body);
     const { name, email, password } = req.body;
-    const user = new User({ name, email, password });
+    const passwordHash= await bcrypt.hash(password,10);
+    const user = new User({ name, email, password : passwordHash });
     await user.save();
     res.send("saved successfully!");
   } catch (err) {
@@ -30,7 +33,7 @@ app.get("/getUser", async (req, res) => {
     const { userEmail } = req.body.email;
     const user = await User.find(userEmail);
     if (!user) {
-      res.statusCode(404).send("user not found!");
+      res.status(404).send("user not found!");
     } else {
       res.send(user);
     }
@@ -45,7 +48,7 @@ app.get("/getFeed", async (req, res) => {
   try {
     const users = await User.find({});
     if (!users) {
-      res.statusCode(404).send("user not found");
+      res.status(404).send("user not found");
     } else {
       res.send(users);
     }
@@ -75,11 +78,11 @@ app.delete("/user", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      res.statusCode(404).send("user doesnt exist");
+      res.status(404).send("user doesnt exist");
     } else {
       const deletedUser = await User.findByIdAndDelete(user._id); 
       if(!deletedUser){
-        res.statusCode(404).send("operation failed");
+        res.status(404).send("operation failed");
       }else{
         res.send("deleetd document : "+ deletedUser)
       }
@@ -96,7 +99,7 @@ app.get("/user", async (req, res)=>{
   try{
     const user = await User.findById(req.body.userId);
     if(!user){
-      res.statusCode(404).send("not found !");
+      res.status(404).send("not found !");
     }else{
       res.send(user);
     }
@@ -109,20 +112,23 @@ app.get("/user", async (req, res)=>{
 // update a user document  by email
 app.patch("/user", async (req, res)=>{
   try{
+    if(req?.body.skills.length>10){
+     throw new Error("too many skills , limit is 10");
+    }
     const user = await User.findOne({email: req.body.email});
     if(!user){
-      res.statusCode(404).send("user doesnt exist");
+      res.status(404).send("user doesnt exist");
     } else {
       const updatedUser = await User.findByIdAndUpdate(user._id, req.body,{ runValidators : true}); 
       if(!updatedUser){
-        res.statusCode(404).send("operation failed");
+        res.status(404).send("operation failed");
       }else{
         res.send("updated document : "+ updatedUser);
       }
     }
   }catch(err){
     console.log(err);
-    res.send("something went wrong ");
+    res.status(400).send("something went wrong " + err);
   }
 });
 
