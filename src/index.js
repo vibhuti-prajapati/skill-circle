@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import validate from "validator";
 import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
+
 const app = express();
 dotenv.config();
 
@@ -18,8 +20,8 @@ app.post("/signUp", async (req, res) => {
   try {
     console.log(req.body);
     const { name, email, password } = req.body;
-    const passwordHash= await bcrypt.hash(password,10);
-    const user = new User({ name, email, password : passwordHash });
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: passwordHash });
     await user.save();
     res.send("saved successfully!");
   } catch (err) {
@@ -29,27 +31,30 @@ app.post("/signUp", async (req, res) => {
   }
 });
 
-app.post("/login", async (req,res)=>{
-  try{
-    const {email, password}= req.body;
-    if(!validate.isEmail){
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!validate.isEmail) {
       throw new error("email format is correct");
     }
-    const user = await User.findOne({email:email});
-    if(!user){
+    const user = await User.findOne({ email: email });
+    if (!user) {
       throw new Error("invalid credentials");
     }
-    const isPasswordValid =await bcrypt.compare(password, user.password);
-    if(isPasswordValid){
-      const token  = "fndofhoanogaieregneogj932safg4wrtg";
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      const token = await jwt.sign(
+        { _id: user._id },
+        "supersecretkeyofvibhuti",
+      );
       res.cookie("token", token);
       res.send("login sucessfull");
-    }else{
+    } else {
       throw new Error("invalid credentials");
     }
-  }catch (err) {
+  } catch (err) {
     console.error(err);
-    res.status(400).send("something went wrong..." +err);
+    res.status(400).send("something went wrong..." + err);
   }
 });
 
@@ -84,16 +89,16 @@ app.get("/getFeed", async (req, res) => {
 });
 
 //find one
-app.get("/findOne", async (req, res) => {
+app.get("/profile", async (req, res) => {
   try {
-    const { userEmail } = req.body.email;
-    const cookies= req.cookies;
-    const {token}= cookies;
-    if(!token){
+    const cookies = req.cookies;
+    const { token } = cookies;
+    if (!token) {
       throw new Error("not logged in ");
     }
-    console.log(token);
-    const user = await User.findOne(userEmail);
+    // will return the _id that we saved in the token
+    const {_id} = jwt.verify(token, "supersecretkeyofvibhuti");
+    const user = await User.findOne({_id:_id});
     if (!user) {
       res.send("user not found");
     } else {
@@ -101,7 +106,7 @@ app.get("/findOne", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.send("something went wrong" +err);
+    res.send("something went wrong" + err);
   }
 });
 
@@ -112,11 +117,11 @@ app.delete("/user", async (req, res) => {
     if (!user) {
       res.status(404).send("user doesnt exist");
     } else {
-      const deletedUser = await User.findByIdAndDelete(user._id); 
-      if(!deletedUser){
+      const deletedUser = await User.findByIdAndDelete(user._id);
+      if (!deletedUser) {
         res.status(404).send("operation failed");
-      }else{
-        res.send("deleetd document : "+ deletedUser)
+      } else {
+        res.send("deleetd document : " + deletedUser);
       }
     }
   } catch (err) {
@@ -125,40 +130,41 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-
-// fiind by id 
-app.get("/user", async (req, res)=>{
-  try{
+// fiind by id
+app.get("/userById", async (req, res) => {
+  try {
     const user = await User.findById(req.body.userId);
-    if(!user){
+    if (!user) {
       res.status(404).send("not found !");
-    }else{
+    } else {
       res.send(user);
     }
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.send("something went wrong ");
   }
-}) ; 
+});
 
 // update a user document  by email
-app.patch("/user", async (req, res)=>{
-  try{
-    if(req?.body.skills.length>10){
-     throw new Error("too many skills , limit is 10");
+app.patch("/user", async (req, res) => {
+  try {
+    if (req?.body.skills.length > 10) {
+      throw new Error("too many skills , limit is 10");
     }
-    const user = await User.findOne({email: req.body.email});
-    if(!user){
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
       res.status(404).send("user doesnt exist");
     } else {
-      const updatedUser = await User.findByIdAndUpdate(user._id, req.body,{ runValidators : true}); 
-      if(!updatedUser){
+      const updatedUser = await User.findByIdAndUpdate(user._id, req.body, {
+        runValidators: true,
+      });
+      if (!updatedUser) {
         res.status(404).send("operation failed");
-      }else{
-        res.send("updated document : "+ updatedUser);
+      } else {
+        res.send("updated document : " + updatedUser);
       }
     }
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).send("something went wrong " + err);
   }
