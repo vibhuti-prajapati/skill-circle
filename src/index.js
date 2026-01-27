@@ -47,8 +47,11 @@ app.post("/login", async (req, res) => {
       const token = await jwt.sign(
         { _id: user._id },
         "supersecretkeyofvibhuti",
+        {expiresIn:"0d"}
       );
-      res.cookie("token", token);
+      res.cookie("token", token,  {
+    expires: new Date(Date.now() + 8 * 3600000) // cookie will be removed after 8 hours
+  });
       res.send("login sucessfull");
     } else {
       throw new Error("invalid credentials");
@@ -67,6 +70,10 @@ app.get("/profile", userAuth, async (req, res) => {
     console.log(err);
     res.send("something went wrong" + err);
   }
+}); 
+
+app.post("/sentConnectionRequest", userAuth, async (req, res)=>{
+
 });
 
 await mongoose

@@ -8,7 +8,7 @@ try{  const {token} =req.cookies;
   if(!token){
     throw new Error("token not present");
   }
-  const {_id} =  jwt.verify(token, "supersecretkeyofvibhuti"); 
+  const {_id} =  jwt.verify(token, process.env.JWT_SECRET_KEY); 
 
   const user =await User.findOne({_id: _id});
   if(!user){
