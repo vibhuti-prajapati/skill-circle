@@ -4,12 +4,12 @@ import User from "./models/user.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import validate from "validator";
-
+import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.get("/userdata", (req, res) => {
   throw new Error("hfwienong");
 });
@@ -41,6 +41,8 @@ app.post("/login", async (req,res)=>{
     }
     const isPasswordValid =await bcrypt.compare(password, user.password);
     if(isPasswordValid){
+      const token  = "fndofhoanogaieregneogj932safg4wrtg";
+      res.cookie("token", token);
       res.send("login sucessfull");
     }else{
       throw new Error("invalid credentials");
@@ -85,6 +87,12 @@ app.get("/getFeed", async (req, res) => {
 app.get("/findOne", async (req, res) => {
   try {
     const { userEmail } = req.body.email;
+    const cookies= req.cookies;
+    const {token}= cookies;
+    if(!token){
+      throw new Error("not logged in ");
+    }
+    console.log(token);
     const user = await User.findOne(userEmail);
     if (!user) {
       res.send("user not found");
@@ -92,7 +100,8 @@ app.get("/findOne", async (req, res) => {
       res.send(user);
     }
   } catch (err) {
-    res.send("something went wrong");
+    console.log(err);
+    res.send("something went wrong" +err);
   }
 });
 
