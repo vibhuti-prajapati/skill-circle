@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "./models/user.js";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import validate from "validator";
 
 const app = express();
 dotenv.config();
@@ -25,6 +26,28 @@ app.post("/signUp", async (req, res) => {
     console.error(err);
     res.statusCode = 500;
     res.send("something went wrong...");
+  }
+});
+
+app.post("/login", async (req,res)=>{
+  try{
+    const {email, password}= req.body;
+    if(!validate.isEmail){
+      throw new error("email format is correct");
+    }
+    const user = await User.findOne({email:email});
+    if(!user){
+      throw new Error("invalid credentials");
+    }
+    const isPasswordValid =await bcrypt.compare(password, user.password);
+    if(isPasswordValid){
+      res.send("login sucessfull");
+    }else{
+      throw new Error("invalid credentials");
+    }
+  }catch (err) {
+    console.error(err);
+    res.status(400).send("something went wrong..." +err);
   }
 });
 
