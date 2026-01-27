@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import validate from "validator";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
+import { userAuth } from "./middlewares/auth.js";
 
 const app = express();
 dotenv.config();
@@ -58,122 +59,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/getUser", async (req, res) => {
-  try {
-    const { userEmail } = req.body.email;
-    const user = await User.find(userEmail);
-    if (!user) {
-      res.status(404).send("user not found!");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    console.log(err);
-    res.send("something went wrong");
-  }
-});
-
-// get all users
-app.get("/getFeed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    if (!users) {
-      res.status(404).send("user not found");
-    } else {
-      res.send(users);
-    }
-  } catch (err) {
-    console.log(err);
-    res.send("something went wrong ");
-  }
-});
-
 //find one
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("not logged in ");
-    }
-    // will return the _id that we saved in the token
-    const {_id} = jwt.verify(token, "supersecretkeyofvibhuti");
-    const user = await User.findOne({_id:_id});
-    if (!user) {
-      res.send("user not found");
-    } else {
-      res.send(user);
-    }
+    res.send(req.user);
   } catch (err) {
     console.log(err);
     res.send("something went wrong" + err);
-  }
-});
-
-// delete user by id
-app.delete("/user", async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      res.status(404).send("user doesnt exist");
-    } else {
-      const deletedUser = await User.findByIdAndDelete(user._id);
-      if (!deletedUser) {
-        res.status(404).send("operation failed");
-      } else {
-        res.send("deleetd document : " + deletedUser);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.send("something went wrong");
-  }
-});
-
-// fiind by id
-app.get("/userById", async (req, res) => {
-  try {
-    const user = await User.findById(req.body.userId);
-    if (!user) {
-      res.status(404).send("not found !");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    console.log(err);
-    res.send("something went wrong ");
-  }
-});
-
-// update a user document  by email
-app.patch("/user", async (req, res) => {
-  try {
-    if (req?.body.skills.length > 10) {
-      throw new Error("too many skills , limit is 10");
-    }
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      res.status(404).send("user doesnt exist");
-    } else {
-      const updatedUser = await User.findByIdAndUpdate(user._id, req.body, {
-        runValidators: true,
-      });
-      if (!updatedUser) {
-        res.status(404).send("operation failed");
-      } else {
-        res.send("updated document : " + updatedUser);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(400).send("something went wrong " + err);
-  }
-});
-
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    console.error(err);
-    res.send("something went wrong..");
   }
 });
 

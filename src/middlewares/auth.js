@@ -1,23 +1,25 @@
-const adminAuth=(req, res,next)=>{
-  console.log("checking authorization ");
-  const toekn ="abs";
-  const isAuthorized = toekn==="abs";
-  if(!isAuthorized){
-    res.statusCode(401).send(" you are not authorized for this action ");
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import User from "../models/user.js";
+dotenv.config();
+
+const userAuth= async (req, res,next)=>{
+try{  const {token} =req.cookies;
+  if(!token){
+    throw new Error("token not present");
+  }
+  const {_id} =  jwt.verify(token, "supersecretkeyofvibhuti"); 
+
+  const user =await User.findOne({_id: _id});
+  if(!user){
+    res.status(400).send("you are not authorized for this action ");
   }else{
+    req.user=user;
     next();
+  }}catch(err){
+    console.log(err);
+    res.status(400).send("ERROR" +err);
   }
 }; 
 
-const userAuth= (req, res,next)=>{
-  console.log("checking authorization fro user  ");
-  const toekn ="abt";
-  const isAuthorized = toekn==="abt";
-  if(!isAuthorized){
-    res.statusCode(401).send(" you are not authorized for this action ");
-  }else{
-    next();
-  }
-}; 
-
-export {adminAuth, userAuth};
+export {userAuth};
