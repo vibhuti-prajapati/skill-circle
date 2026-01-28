@@ -19,7 +19,7 @@ PATCH /profile/password: Change the user's password.
 # Status Options: ignore, interested, accepted, rejected.
 Endpoints:
 ~~POST /request/send/:toUserId: Send a connection request to another user.~~
-PATCH /request/review/:requestId/:status : accept / Reject a connection request.
+~~PATCH /request/review/:requestId/:status : accept / Reject a connection request.~~
 
 # User Router
     Handles operations related to connections, requests, and the user feed.

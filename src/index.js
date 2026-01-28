@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { authRouter } from "./routes/auth.js";
 import { profileRouter } from "./routes/profile.js";
 import {connectionRouter} from "./routes/connectionRequest.js";
+import { userRouter } from "./routes/user.js";
 const app = express();
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/",connectionRouter)
+app.use("/", userRouter);
 await mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
