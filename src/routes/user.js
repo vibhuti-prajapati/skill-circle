@@ -53,6 +53,9 @@ userRouter.get("/user/request/connections", userAuth, async (req, res) => {
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) > 20 ? 10 : req.query.limit || 10 ;
+    const skip = (page - 1) * limit;
 
     // get ._id of people who have sent or received requests from :status ="pending"|| "accepted"
     const sentRequestProfiles = await ConnectionRequest.find({
@@ -70,7 +73,9 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
         _id: { $nin: Array.from(hiddenProfiles) },
         _id: { $ne: loggedInUser._id },
       })
-      .select(ALLOWED_FEILDS);
+      .select(ALLOWED_FEILDS)
+      .skip(skip)
+      .limit(limit);
     res.json({ data: users });
   } catch (err) {
     console.log(err);
