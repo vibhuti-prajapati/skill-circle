@@ -15,7 +15,9 @@ const connectionRequestSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: {
-        values: ["accepted", "rejected", "pending", "cancelled"],
+        // TODO : add  interested , ignored ? need a way to know interest of user
+        // and why have rejected ? because its not like we are gonna notify about rejectiion
+        values: ["accepted", "pending", "cancelled"],
         message: `{VALUE} inavlid status`,
       },
       default: "pending",

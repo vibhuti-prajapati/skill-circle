@@ -18,10 +18,8 @@ PATCH /profile/password: Change the user's password.
 
 # Status Options: ignore, interested, accepted, rejected.
 Endpoints:
-~~POST /request/send/intrested/:userId: Send a connection request to another user.~~
-~~POST /request/ignored/:userId: Mark a request as ignored.~~
-POST /request/review/accepted/:requestId: Accept a connection request.
-POST /request/review/rejected/:requestId: Reject a connection request.
+~~POST /request/send/:toUserId: Send a connection request to another user.~~
+PATCH /request/review/:requestId/:status : accept / Reject a connection request.
 
 # User Router
     Handles operations related to connections, requests, and the user feed.
@@ -29,3 +27,4 @@ POST /request/review/rejected/:requestId: Reject a connection request.
 GET /user/connections: Get a list of connections for the logged-in user.
 GET /user/requests/received: Retrieve a list of received connection requests.
 GET /user/feed: Get a list of suggested users to connect with.
+

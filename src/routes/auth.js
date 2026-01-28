@@ -7,6 +7,7 @@ const authRouter= express.Router();
 
 authRouter.post("/signUp", async (req, res) => {
   try {
+    // TODO : validate email and password and name stuff  
     console.log(req.body);
     const { name, email, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
@@ -15,8 +16,7 @@ authRouter.post("/signUp", async (req, res) => {
     res.send("saved successfully!");
   } catch (err) {
     console.error(err);
-    res.statusCode = 500;
-    res.send("something went wrong...");
+    res.status(400).send("something went wrong...");
   }
 });
 
