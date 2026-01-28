@@ -24,7 +24,7 @@ Endpoints:
 # User Router
     Handles operations related to connections, requests, and the user feed.
 
-GET /user/connections: Get a list of connections for the logged-in user.
-GET /user/requests/received: Retrieve a list of received connection requests.
+~~GET /user/requests/connections: Get a list of connections for the logged-in user.~~
+~~GET /user/requests/received: Retrieve a list of received connection requests.~~
 GET /user/feed: Get a list of suggested users to connect with.
 
