@@ -26,13 +26,15 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      lowercase: true,
-      trim: true,
-      validate(value) {
-        if (!["male", "female", "other"] === value) {
-          throw new Error("gender value is not valid");
-        }
+      enum:{
+        values:["male", "female", "other"],
+        message:`{VALUE} is not a valid input`
       },
+      // validate(value) {
+      //   if (!["male", "female", "other"] === value) {
+      //     throw new Error("gender value is not valid");
+      //   }
+      // },
     },
     about: {
       type: String,

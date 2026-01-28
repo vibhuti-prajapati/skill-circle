@@ -3,13 +3,13 @@
 
 ~~POST /signup: Register a new user~~
 ~~POST /login: Authenticate a user and issue a token.~~
-POST /logout: Revoke the user's session.
+~~POST /logout: Revoke the user's session.~~
 
 # Profile Router
     Manages user profile-related operations.
 
-GET /profile/view: Retrieve the profile information of the logged-in user.
-PATCH /profile/edit: Update user profile details.
+~~GET /profile/view: Retrieve the profile information of the logged-in user.~~
+~~PATCH /profile/edit: Update user profile details.~~
 PATCH /profile/password: Change the user's password.
 
 
@@ -18,8 +18,8 @@ PATCH /profile/password: Change the user's password.
 
 # Status Options: ignore, interested, accepted, rejected.
 Endpoints:
-POST /request/send/intrested/:userId: Send a connection request to another user.
-POST /request/ignored/:userId: Mark a request as ignored.
+~~POST /request/send/intrested/:userId: Send a connection request to another user.~~
+~~POST /request/ignored/:userId: Mark a request as ignored.~~
 POST /request/review/accepted/:requestId: Accept a connection request.
 POST /request/review/rejected/:requestId: Reject a connection request.
 
