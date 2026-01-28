@@ -5,22 +5,25 @@ const connectionRequestSchema = new mongoose.Schema(
     fromUserId: {
       type: mongoose.Schema.ObjectId,
       required: true,
+      ref: "User",
     },
     toUserId: {
       type: mongoose.Schema.ObjectId,
       required: true,
+      ref: "User",
     },
     status: {
       type: String,
       enum: {
-        values: ["accepted", "interested", "rejected", "ignored"],
+        values: ["accepted", "rejected", "pending", "cancelled"],
         message: `{VALUE} inavlid status`,
       },
+      default: "pending",
     },
   },
   {
-    timeseries: true,
+    timestamps: true,
   },
 );
-
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 }, { unique: true });
 export default new mongoose.model("ConnectionRequest", connectionRequestSchema);
