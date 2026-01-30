@@ -22,12 +22,13 @@ authRouter.post("/signUp", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    // TODO : make the method call properly (avaoiding because existing mail format in dbis bad)
     if (!validate.isEmail) {
-      throw new error("email format is correct");
+      return res.json({message :"email format is correct"});
     }
     const user = await User.findOne({ email: email });
     if (!user) {
-      throw new Error("invalid credentials");
+      return res.json({message :"invalid credentials"});
     }
     const isPasswordValid = user.validatePassword(password);
     if (isPasswordValid) {
@@ -35,13 +36,14 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token,  {
     expires: new Date(Date.now() + 8 * 3600000) // cookie will be removed after 8 hours
   });
-      res.send("login sucessfull");
+    console.log(user.email)
+      res.json({message :"login sucessfull", data :user});
     } else {
-      throw new Error("invalid credentials");
+      return res.json({message :"invalid credentials"});
     }
   } catch (err) {
     console.error(err);
-    res.status(400).send("something went wrong..." + err);
+    res.status(400).json({message :  err } );
   }
 });
 

@@ -50,6 +50,8 @@ userRouter.get("/user/request/connections", userAuth, async (req, res) => {
   }
 });
 
+
+// TODO : enhance the feed api -> add filters and more stuff 
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;

@@ -26,5 +26,5 @@ Endpoints:
 
 ~~GET /user/requests/connections: Get a list of connections for the logged-in user.~~
 ~~GET /user/requests/received: Retrieve a list of received connection requests.~~
-GET /user/feed: Get a list of suggested users to connect with.
+~~GET /user/feed: Get a list of suggested users to connect with.~~
 
