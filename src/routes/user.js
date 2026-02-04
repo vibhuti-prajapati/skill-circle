@@ -5,7 +5,7 @@ import User from "../models/user.js";
 import user from "../models/user.js";
 
 const userRouter = express.Router();
-const ALLOWED_FEILDS = ["name", "age", "gender", "about", "skills"];
+const ALLOWED_FEILDS = ["name", "age", "gender", "about", "skills", "profileImage"];
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {

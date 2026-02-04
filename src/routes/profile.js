@@ -8,19 +8,19 @@ const profileRouter = express.Router();
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
-    res.json({data : req.user});
+    res.json({ data: req.user });
   } catch (err) {
     console.log(err);
     res.send("something went wrong" + err);
   }
 });
 
-// TODO :  REMOVE OLD IMAGE if exists on clooudinary before uploading new one 
-// TODO : delete image from cloudinary when user removes the profile picture 
-// TODO : banner image upload 
-// TODO : image file resizing 
-//TODO : REStrict file size 
-// TODO : proper error handling 
+// TODO :  REMOVE OLD IMAGE if exists on clooudinary before uploading new one
+// TODO : delete image from cloudinary when user removes the profile picture
+// TODO : banner image upload
+// TODO : image file resizing
+//TODO : REStrict file size
+// TODO : proper error handling
 profileRouter.post(
   "/profile/uploadImage",
   userAuth,
@@ -28,17 +28,20 @@ profileRouter.post(
   async (req, res) => {
     try {
       const imageUrl = req.file.path;
+       const type = req.body.type; 
+      const updateField =
+        type === "profileImage" ? "profileImage" : "bannerImage";
       await user.findByIdAndUpdate(req.user._id, {
-        $set: { profileImage: imageUrl },
+        $set: { [updateField]: imageUrl },
       });
-      res.json({message:"image uploaded !", imageUrl : imageUrl})
+      res.json({ message:  `${updateField} uploaded!`, imageUrl: imageUrl });
     } catch (err) {
       console.log(err);
       res.send("something went wrong" + err);
     }
   },
 );
-// TODO : only do image upload if user is actually saving the changes 
+// TODO : only do image upload if user is actually saving the changes
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     if (!(await editDataValidator(req))) {
