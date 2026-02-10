@@ -43,7 +43,7 @@ userRouter.get("/user/request/connections", userAuth, async (req, res) => {
       }
       return row.fromUserId;
     });
-    res.send(connenctions);
+    res.json({success:true , data : connenctions});
   } catch (err) {
     console.log(err);
     res.status(500).send("something went wrong");

@@ -87,7 +87,7 @@ connectionRouter.patch("/request/review/", userAuth, async (req, res) => {
         .json({ succeess: false, message: "requestID is not valid" });
     }
     // check if request exists
-    const existingRequest = await ConnectionRequest.findById({
+    const existingRequest = await ConnectionRequest.findOne({
       _id: requestId,
       status: "pending",
     });

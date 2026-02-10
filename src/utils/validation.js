@@ -1,5 +1,5 @@
 const editDataValidator = async (req, res) => {
-  const allowedFields = ["name", "age", "skills", "about", "gender"];
+  const allowedFields = ["name", "age", "skills", "about", "gender", "bannerImage", "profileImage"];
   const isValid = Object.keys(req.body).every((field) => {
     return allowedFields.includes(field);
   });

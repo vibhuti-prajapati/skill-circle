@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
     profileImage:{
       type:String
     },
+        bannerImage:{
+      type:String
+    },
     age: {
       type: Number,
       required: false,

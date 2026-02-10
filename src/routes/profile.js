@@ -3,8 +3,8 @@ import { userAuth } from "../middlewares/auth.js";
 import { editDataValidator } from "../utils/validation.js";
 import User from "../models/user.js";
 import upload from "../middlewares/upload.js";
-import user from "../models/user.js";
 const profileRouter = express.Router();
+const allowedFields = ["name", "email", "about", "skills", "gender", "bannerImage", "profileImage"];
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
@@ -21,23 +21,30 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
 // TODO : image file resizing
 //TODO : REStrict file size
 // TODO : proper error handling
-profileRouter.post(
+profileRouter.patch(
   "/profile/uploadImage",
   userAuth,
   upload.single("image"),
   async (req, res) => {
     try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image uploaded" });
+      }
+
       const imageUrl = req.file.path;
-       const type = req.body.type; 
-      const updateField =
-        type === "profileImage" ? "profileImage" : "bannerImage";
-      await user.findByIdAndUpdate(req.user._id, {
-        $set: { [updateField]: imageUrl },
+      const type = req.body.type;
+
+      if (!["profileImage", "bannerImage"].includes(type)) {
+        return res.status(400).json({ message: "Invalid type" });
+      }
+
+      res.json({
+        message: `${type} uploaded successfully`,
+        imageUrl,
       });
-      res.json({ message:  `${updateField} uploaded!`, imageUrl: imageUrl });
     } catch (err) {
-      console.log(err);
-      res.send("something went wrong" + err);
+      console.error(err);
+      res.status(500).json({ message: "Upload failed" });
     }
   },
 );
@@ -48,10 +55,19 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       throw new Error("data is not valid");
     }
 
-    Object.keys(req.body).every((field) => {
-      req.user[field] = req.body[field];
+    const updates = {};
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
     });
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updates },
+      { new: true },
+    );
     if (!updatedUser) {
       throw new Error("operation failed");
     }
