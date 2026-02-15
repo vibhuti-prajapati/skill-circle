@@ -5,7 +5,14 @@ import User from "../models/user.js";
 import user from "../models/user.js";
 
 const userRouter = express.Router();
-const ALLOWED_FEILDS = ["name", "age", "gender", "about", "skills", "profileImage"];
+const ALLOWED_FEILDS = [
+  "name",
+  "age",
+  "gender",
+  "about",
+  "skills",
+  "profileImage",
+];
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {
@@ -26,6 +33,24 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
     res.send("ERROR :" + err);
   }
 });
+
+userRouter.get("/user/request/sent", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+
+    const sentRequests = await ConnectionRequest.find({
+      fromUserId: loggedInUser._id,
+      status: "pending",
+    }).populate("toUserId", ALLOWED_FEILDS);
+    res
+      .status(200)
+      .json({ success: true, data: sentRequests, count: sentRequests.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "something went wrong" });
+  }
+});
+
 userRouter.get("/user/request/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
@@ -42,7 +67,7 @@ userRouter.get("/user/request/connections", userAuth, async (req, res) => {
       }
       return row.fromUserId;
     });
-    res.json({success:true , data : connenctions});
+    res.json({ success: true, data: connenctions });
   } catch (err) {
     console.log(err);
     res.status(500).send("something went wrong");
