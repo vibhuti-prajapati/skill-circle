@@ -26,7 +26,6 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
     res.send("ERROR :" + err);
   }
 });
-
 userRouter.get("/user/request/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
