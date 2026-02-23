@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -56,12 +55,8 @@ const userSchema = new mongoose.Schema(
 );
 // these methods return a promise since they are async so remember to use await when you  use them or you will be dealing with promises without even knowing 
 
-userSchema.methods.createJWT = async function () {
-  return jwt.sign({ _id: this._id }, "supersecretkeyofvibhuti", {
-    expiresIn: "7d",
-  });
-};
-userSchema.methods.validatePassword = async function (passwordInput) {
+
+userSchema.methods.comparePassword = async function (passwordInput) {
   const passwordHash = this.password;
   return await bcrypt.compare(passwordInput, passwordHash);
 };
