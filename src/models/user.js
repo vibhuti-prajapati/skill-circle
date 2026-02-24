@@ -18,11 +18,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    profileImage:{
-      type:String
+    profileImage: {
+      type: String,
     },
-        bannerImage:{
-      type:String
+    profileImagePublicId: {
+      type: String,
+    },
+    bannerImage: {
+      type: String,
+    },
+    bannerImagePublicId: {
+      type: String,
     },
     age: {
       type: Number,
@@ -31,9 +37,9 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum:{
-        values:["male", "female", "other"],
-        message:`{VALUE} is not a valid input`
+      enum: {
+        values: ["male", "female", "other"],
+        message: `{VALUE} is not a valid input`,
       },
       // validate(value) {
       //   if (!["male", "female", "other"] === value) {
@@ -53,8 +59,7 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-// these methods return a promise since they are async so remember to use await when you  use them or you will be dealing with promises without even knowing 
-
+// these methods return a promise since they are async so remember to use await when you  use them or you will be dealing with promises without even knowing
 
 userSchema.methods.comparePassword = async function (passwordInput) {
   const passwordHash = this.password;

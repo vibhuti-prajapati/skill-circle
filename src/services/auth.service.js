@@ -1,7 +1,8 @@
 import { hashPassword } from "../utils/hash.js";
-import User from "../models/user.js";
+import User from '../models/user.js'
 import { validateEmail } from "../utils/validateEmail.js";
 import { createJWT } from "../utils/token.js";
+
 export const signUp = async ({ name, email, password }) => {
   if (!validateEmail(email)) {
     throw new Error("email format is not valid!");
