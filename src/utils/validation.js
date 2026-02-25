@@ -79,9 +79,8 @@ const reviewRewuestValidator = async (req, res, next) => {
       .status(400)
       .json({ succeess: false, message: "requestID is not valid" });
   }
-
-
   next();
 };
+
 export { editDataValidator, sendRequestValidator, reviewRewuestValidator };
  
