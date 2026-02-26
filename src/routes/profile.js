@@ -4,8 +4,9 @@ import { editDataValidator } from "../utils/validation.js";
 import { view, editProfile } from "../controllers/profile.controller.js";
 import upload from "../middlewares/upload.js";
 const profileRouter = express.Router();
+import AsyncHandler from "../middlewares/asyncHandler.js";
 
-profileRouter.get("/profile/view", userAuth, view);
+profileRouter.get("/profile/view", userAuth, AsyncHandler(view));
 // // TODO : BANNER IMAGE UPLOAD
 // TODO : image file resizing
 // TODO : REStrict file size
@@ -19,7 +20,7 @@ profileRouter.patch(
     { name: "bannerImage", maxCount: 1 },
   ]),
   editDataValidator,
-  editProfile,
+  AsyncHandler(editProfile),
 );
 
 export { profileRouter };

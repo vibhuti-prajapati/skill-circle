@@ -1,9 +1,11 @@
 import User from "../models/user.js";
 import { replaceImage, deleteImage } from "./cloudinary.service.js";
+import AppError from "../utils/AppError.js";
+
 export const editProfile = async ({ userId, updates, files }) => {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("user not found");
+      throw new AppError("user not found",404);
     }
     // updating the fields
     Object.assign(user, updates);

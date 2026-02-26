@@ -60,13 +60,12 @@ export const generateFeed = async (userId, page, limit, skip) => {
     hiddenProfiles.add(element.fromUserId.toString());
     hiddenProfiles.add(element.toUserId.toString());
   });
-  const users = await User
-    .find({
-      _id: {
-        $nin: Array.from(hiddenProfiles),
-        $ne: userId,
-      },
-    })
+  const users = await User.find({
+    _id: {
+      $nin: Array.from(hiddenProfiles),
+      $ne: userId,
+    },
+  })
 
     .select(ALLOWED_FEILDS)
     .skip(skip)

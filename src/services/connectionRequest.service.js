@@ -1,10 +1,11 @@
 import ConnectionRequest from "../models/connectionRequest.js";
 import User from "../models/user.js";
+import AppError from "../utils/AppError.js";
 
 export const sendRequest = async (toUserId, fromUserId) => {
   const isToUserIdValid = await User.findOne({ _id: toUserId });
   if (!isToUserIdValid) {
-    throw new Error("the user does not exist");
+    throw new AppError("the user does not exist", 404);
   }
   // TODO : improve this for race conditions
 
@@ -20,7 +21,7 @@ export const sendRequest = async (toUserId, fromUserId) => {
   });
 
   if (existingRequest) {
-    throw new Error("request already exists");
+    throw new AppError("request already exists", 409);
   }
 
   const connectionRequest = new ConnectionRequest({
@@ -42,7 +43,7 @@ export const reviewRequest = async ({ user, requestId, status }) => {
     status: "pending",
   });
   if (!existingRequest || existingRequest.status !== "pending") {
-    throw new Error("request not found");
+    throw new AppError("request not found", 409);
   }
   // now some authorization check
   // toUser == loggedIn user => accept
@@ -52,10 +53,10 @@ export const reviewRequest = async ({ user, requestId, status }) => {
   const isSender = existingRequest.fromUserId.equals(user._id);
   const isReceiver = existingRequest.toUserId.equals(user._id);
   if (!isSender && !isReceiver) {
-    return { success: false, message: "Not authorized" };
+    throw new AppError("Not authorized", 403);
   }
   if (status === "accepted" && !isReceiver) {
-    return { success: false, message: "not authorized" };
+    throw new AppError("Not authorized", 403);
   }
   existingRequest.status = status;
   const data = await existingRequest.save();

@@ -1,5 +1,7 @@
 import { deleteImage } from "../services/cloudinary.service.js";
 import mongoose from "mongoose";
+import AppError from "../utils/AppError.js";
+
 const editDataValidator = async (req, res, next) => {
   const allowedFields = [
     "name",
@@ -29,10 +31,7 @@ const editDataValidator = async (req, res, next) => {
       await deleteImage(req.files.bannerImage[0].filename);
     }
 
-    return res.status(400).json({
-      success: false,
-      message: "Invalid data",
-    });
+    throw new AppError("conflicting instructions", 409);
   }
   req.body.removeBannerImage = req.body.removeBannerImage === "true";
   req.body.removeProfileImage = req.body.removeProfileImage === "true";
@@ -40,15 +39,14 @@ const editDataValidator = async (req, res, next) => {
 };
 
 const sendRequestValidator = async (req, res, next) => {
-  if (!req.body.toUserId || !mongoose.Types.ObjectId.isValid(req.body.toUserId)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "user id invalid!" });
+  if (
+    !req.body.toUserId ||
+    !mongoose.Types.ObjectId.isValid(req.body.toUserId)
+  ) {
+    throw new AppError("invalid data ", 400)
   }
   if (req.user._id.equals(req.body.toUserId)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "cannot send connection to yourself" });
+    throw new AppError("conflicting instrcutions", 409);
   }
   next();
 };
@@ -59,28 +57,21 @@ const reviewRewuestValidator = async (req, res, next) => {
     return allowedFields.includes(field);
   });
   if (!isDataValid) {
-    return res
-      .status(400)
-      .json({ succeess: false, message: "data is not valid" });
+    throw new AppError("invalid data ", 400);
   }
   // check the status
   const allowedStatus = ["accepted", "cancelled"];
   if (!allowedStatus.includes(req.body.status)) {
-    return res
-      .status(400)
-      .json({ succeess: false, message: "status is not valid" });
+    throw new AppError("status is not valid ", 400);
   }
   // checkn request if valid mongoose id
   if (
     !req.body.requestId ||
     !mongoose.Types.ObjectId.isValid(req.body.requestId)
   ) {
-    return res
-      .status(400)
-      .json({ succeess: false, message: "requestID is not valid" });
+    throw new AppError("request id is not valid ", 400);
   }
   next();
 };
 
 export { editDataValidator, sendRequestValidator, reviewRewuestValidator };
- 

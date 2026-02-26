@@ -7,6 +7,7 @@ import { profileRouter } from "./routes/profile.js";
 import {connectionRouter} from "./routes/connectionRequest.js";
 import { userRouter } from "./routes/user.js";
 import cors from "cors";
+import {errorHandler} from "./middlewares/errorHandler.js";
 const app = express();
 dotenv.config();
 app.use(cors({
@@ -21,6 +22,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/",connectionRouter)
 app.use("/", userRouter);
+app.use("/", errorHandler )
 await mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {

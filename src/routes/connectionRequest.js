@@ -8,20 +8,20 @@ import {
   sendRequestValidator,
   reviewRewuestValidator,
 } from "../utils/validation.js";
-
+import AsyncHandler from "../middlewares/asyncHandler.js";
 const connectionRouter = express.Router();
 
 connectionRouter.post(
   "/request/send",
   userAuth,
   sendRequestValidator,
-  sendRequest,
+  AsyncHandler(sendRequest),
 );
 
 connectionRouter.patch(
   "/request/review/",
   userAuth,
   reviewRewuestValidator,
-  reviewRequest,
+  AsyncHandler(reviewRequest),
 );
 export { connectionRouter };
