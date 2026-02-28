@@ -9,6 +9,8 @@ const editDataValidator = async (req, res, next) => {
     "skills",
     "about",
     "gender",
+    "bannerImage",
+    "profileImage",
     "removeProfileImage",
     "removeBannerImage",
   ];

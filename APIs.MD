@@ -1,3 +1,13 @@
+# TODO :
+    create a proper readme
+    try out .explain() from mongodb
+    test all the queries for high number of users
+    find out the best indexing to improve queries 
+    note and improve the current response time of some apis 
+    load testing on apis
+    risk based authentication, captcha, rate limiting , oauth , caching , proper testing (everything is not necessary rn)
+    more features actual user features... 
+
 # Auth Router
     Handles user authentication, including signup, login, and logout.
 
